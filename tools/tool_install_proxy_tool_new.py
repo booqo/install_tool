@@ -25,18 +25,24 @@ if [ ! -e \"${target_dir}Country.mmdb\" ]; then
 else
     echo \"文件已存在，无需下载。\"
 fi
+mkdir -p $HOME/.clash/public
 cd $HOME/.clash/public && python3 -m http.server --bind 0.0.0.0 8088 &
 sleep 1
+if [ -f "./clash.gz" ]; then
+    gzip -d ./clash.gz
+fi
 chmod +x ./clash
-export http_proxy=\"http://127.0.0.1:7890\"
-export https_proxy=\"http://127.0.0.1:7890\"
 echo \"===============================================\"
-echo \"终端通过环境变量设置: export http_proxy=http://127.0.0.1:7890 && export https_proxy=http://127.0.0.1:7890\"
+echo \"你可以设置代理环境变量:\"
+echo \"  export http_proxy=http://127.0.0.1:7890\"
+echo \"  export https_proxy=http://127.0.0.1:7890\"
 echo \"系统设置默认代理方式: 系统设置->网络->网络代理->手动->HTTP(127.0.0.1 7890)->HTTPS(127.0.0.1 7890)\"
-echo \"管理页面方法：https://fishros.org.cn/forum/topic/668 \"
+echo \"管理页面方法：https://clashyun.com/288.html \"
 echo \"===============================================\"
-xdg-open http://127.0.0.1:8088/ >> /dev/null &
-./clash
+if command -v xdg-open &> /dev/null && [ -n "$DISPLAY" ]; then
+    xdg-open http://127.0.0.1:8088/ >> /dev/null &
+fi
+nohup ./clash > clash_run.log 2>&1 &
 """
 
 start_clash_desktop = """[Desktop Entry]
@@ -89,17 +95,28 @@ class Tool(BaseTool):
         FileUtils.new(path=clash_home, name="start_clash.sh", data=start_clash_sh.replace("{clash_home}", clash_home).replace("{server_url}", serve_url))
         CmdTask(f'chmod +x {clash_home}start_clash.sh', os_command=True).run()
 
-        auto_start_path = f"{user_home}/.config/autostart/"
-        dic = {1: "设置开机自启动", 2: "不设置开机自启动"}
-        code, _ = ChooseTask(dic, "是否设置为开机自启动?").run()
-        if code == 2:
-            FileUtils.delete(auto_start_path + "start_clash.desktop")
-        if code == 1:
-            CmdTask('sudo apt install gnome-terminal -y', os_command=True).run()
-            FileUtils.new(path=auto_start_path, name="start_clash.desktop", data=start_clash_desktop.replace("{script_path}", clash_home + "start_clash.sh"))
-            CmdTask(f'chmod +x {auto_start_path}start_clash.desktop', os_command=True).run()
+        if os.environ.get("DISPLAY"):
+            auto_start_path = f"{user_home}/.config/autostart/"
+            dic = {1: "设置开机自启动", 2: "不设置开机自启动"}
+            code, _ = ChooseTask(dic, "是否设置为开机自启动?").run()
+            if code == 2:
+                FileUtils.delete(auto_start_path + "start_clash.desktop")
+            if code == 1:
+                CmdTask('sudo apt install gnome-terminal -y', os_command=True).run()
+                FileUtils.new(path=auto_start_path, name="start_clash.desktop", data=start_clash_desktop.replace("{script_path}", clash_home + "start_clash.sh"))
+                CmdTask(f'chmod +x {auto_start_path}start_clash.desktop', os_command=True).run()
 
-        PrintUtils.print_info("已配置 clash 启动脚本，可通过终端或桌面启动")
+            PrintUtils.print_info("已配置 clash 启动脚本，可通过终端或桌面启动")
+        else:
+            PrintUtils.print_warn("检测到无图形界面环境")
+            dic = {1: "自动后台运行 start_clash.sh", 2: "不自动运行，由我手动执行"}
+            code, _ = ChooseTask(dic, "你希望如何启动 Clash?").run()
+            if code == 1:
+                CmdTask(f"nohup bash {clash_home}start_clash.sh > {clash_home}clash.log 2>&1 &", os_command=True).run()
+                PrintUtils.print_info("Clash 已后台启动，日志位于 clash.log")
+            else:
+                PrintUtils.print_info("你可以手动运行: bash ~/.clash/start_clash.sh 来启动 Clash")
+
 
     def run(self):
         self.install_proxy_tool()
