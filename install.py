@@ -31,7 +31,7 @@ tools ={
     11: {'tip':'一键安装:ROS Docker版(支持所有版本ROS/ROS2)',                'type':INSTALL_ROS,    'tool':'tools/tool_install_ros_with_docker.py' ,'dep':[7,8] },
     12: {'tip':'一键安装:PlateformIO MicroROS开发环境(支持Fishbot)',      'type':INSTALL_SOFTWARE,     'tool':'tools/tool_install_micros_fishbot_env.py' ,'dep':[] },
     13: {'tip':'一键配置:python国内源','type':CONFIG_TOOL,'tool':'tools/tool_config_python_source.py' ,'dep':[] },
-    # 14: {'tip':'一键安装:科学上网代理工具','type':INSTALL_SOFTWARE,'tool':'tools/tool_install_proxy_tool.py' ,'dep':[8] },
+    14: {'tip':'一键安装:科学上网代理工具','type':INSTALL_SOFTWARE,'tool':'tools/tool_install_proxy_tool.py' ,'dep':[8] },
     15: {'tip':'一键安装：QQ for Linux', 'type':INSTALL_SOFTWARE, 'tool': 'tools/tool_install_qq.py', 'dep':[]},
     16: {'tip':'一键安装：系统自带ROS (！！警告！！仅供特殊情况下使用)', 'type':INSTALL_ROS, 'tool': 'tools/tool_install_ros1_systemdefault.py', 'dep':[5]},
     17: {'tip':'一键配置: Docker代理(支持VPN+代理服务两种模式)', 'type':CONFIG_TOOL, 'tool': 'tools/tool_config_docker_proxy.py', 'dep':[]},
@@ -93,28 +93,28 @@ def main():
         return False
     PrintUtils.print_success(tr.tr("基础检查通过..."))
     
-    book = tr.tr("""
-                        .-~~~~~~~~~-._       _.-~~~~~~~~~-.
-                    __.'              ~.   .~              `.__
-                .'//     开卷有益        \./     书山有路     \\ `.
-                .'// 可以多看看小鱼的文章  | 关注B站鱼香ROS机器人 \\ `.
-            .'// .-~~~~~~~~~~~~~~-._     |     _,-~~~~~~~~~~~. \\`.
-            .'//.-"                 `-.  |  .-'                 "-.\\`.
-        .'//______.============-..   \ | /   ..-============.______\\`.
-        .'______________________________\|/______________________________`
-        ----------------------------------------------------------------------""")
-
-    tip =tr.tr("""===============================================================================
-======欢迎使用一键安装工具，人生苦短，三省吾身，省时省力省心!=======
-======一键安装已开源，请放心使用：https://github.com/fishros/install =======
-===============================================================================
-    """)
-    end_tip = tr.tr("""===============================================================================
-如果觉得工具好用,请给个star,如果你想和小鱼一起编写工具,请关注B站/公众号<鱼香ROS>,联系小鱼
-更多工具教程，请访问鱼香ROS官方网站:http://fishros.com
-    """)
-    PrintUtils.print_delay(tip,0.001)
-    PrintUtils.print_delay(book,0.001)
+#     book = tr.tr("""
+#                         .-~~~~~~~~~-._       _.-~~~~~~~~~-.
+#                     __.'              ~.   .~              `.__
+#                 .'//     开卷有益        \./     书山有路     \\ `.
+#                 .'// 可以多看看小鱼的文章  | 关注B站鱼香ROS机器人 \\ `.
+#             .'// .-~~~~~~~~~~~~~~-._     |     _,-~~~~~~~~~~~. \\`.
+#             .'//.-"                 `-.  |  .-'                 "-.\\`.
+#         .'//______.============-..   \ | /   ..-============.______\\`.
+#         .'______________________________\|/______________________________`
+#         ----------------------------------------------------------------------""")
+#
+#     tip =tr.tr("""===============================================================================
+# ======欢迎使用一键安装工具，人生苦短，三省吾身，省时省力省心!=======
+# ======一键安装已开源，请放心使用：https://github.com/fishros/install =======
+# ===============================================================================
+#     """)
+#     end_tip = tr.tr("""===============================================================================
+# 如果觉得工具好用,请给个star,如果你想和小鱼一起编写工具,请关注B站/公众号<鱼香ROS>,联系小鱼
+# 更多工具教程，请访问鱼香ROS官方网站:http://fishros.com
+#     """)
+#     PrintUtils.print_delay(tip,0.001)
+#     PrintUtils.print_delay(book,0.001)
     # download tools
     code,result = ChooseWithCategoriesTask(tool_categories, tips=tr.tr("---众多工具，等君来用---"),categories=tools_type_map).run()
     if code==0: PrintUtils().print_success(tr.tr("是觉得没有合胃口的菜吗？那快联系的小鱼增加菜单吧~"))
